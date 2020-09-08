@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from .models import Account
 
 
@@ -27,5 +26,3 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.set_password(password)
         account.save()
         return account
-
-# class LoginSerializer(serializers.  )
