@@ -44,6 +44,9 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    # custom fields
+    is_customer = models.BooleanField(default=True)
+    is_restaurant = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', ]
@@ -57,6 +60,12 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+
+class RestaurantInfo(models.Model):
+    address = models.CharField(max_length=200)
+    phone_num = models.CharField(max_length=35)
+    restaurant = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='info')
 
 
 @receiver(post_save, sender=get_user_model())

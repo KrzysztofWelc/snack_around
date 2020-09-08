@@ -1,9 +1,9 @@
-from rest_framework import status
+import pprint
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from .serializers import RegistrationSerializer
+from .serializers import RegistrationSerializer, RestaurantInfoSerializer
 
 
 class LoginView(ObtainAuthToken):
@@ -28,10 +28,17 @@ def register_view(request):
     data = {}
     if serializer.is_valid():
         account = serializer.save()
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(account)
         data['response'] = 'registration successful'
         data['email'] = account.email
         data['username'] = account.username
+        data['is_restaurant'] = account.is_restaurant
         data['token'] = Token.objects.get(user=account).key
+        if data['is_restaurant']:
+            data['restaurant_info'] = {}
+            data['restaurant_info']['address'] = account.info.address
+            data['restaurant_info']['phone_num'] = account.info.phone_num
     else:
         data = serializer.errors
     return Response(data)
