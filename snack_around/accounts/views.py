@@ -1,4 +1,3 @@
-import pprint
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
@@ -28,9 +27,7 @@ def register_view(request):
     data = {}
     if serializer.is_valid():
         account = serializer.save()
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(account)
-        data['response'] = 'registration successful'
+        data['id'] = account.id
         data['email'] = account.email
         data['username'] = account.username
         data['is_restaurant'] = account.is_restaurant

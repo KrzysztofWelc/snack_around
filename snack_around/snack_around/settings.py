@@ -30,7 +30,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     # my apps
-    'accounts'
+    'accounts',
+    'reviews'
 ]
 
 AUTH_USER_MODEL = 'accounts.Account'
