@@ -8,7 +8,9 @@ class ReviewSerializer(ModelSerializer):
         fields = '__all__'
 
     def validate(self, data):
-        if not data['restaurant'].is_restaurant:
-            raise ValidationError({'restaurant': 'review\'s subject must me a restaurant'})
+        print(data)
+        if data.get('restaurant'):
+            if not data['restaurant'].is_restaurant:
+                raise ValidationError({'restaurant': 'review\'s subject must me a restaurant'})
 
         return data
