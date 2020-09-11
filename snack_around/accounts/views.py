@@ -35,18 +35,9 @@ class LoginView(ObtainAuthToken):
 @permission_classes([])
 def register_view(request):
     serializer = RegistrationSerializer(data=request.data)
-    data = {}
     if serializer.is_valid():
-        account = serializer.save()
-        data['id'] = account.id
-        data['email'] = account.email
-        data['username'] = account.username
-        data['is_restaurant'] = account.is_restaurant
-        data['token'] = Token.objects.get(user=account).key
-        if data['is_restaurant']:
-            data['restaurant_info'] = {}
-            data['restaurant_info']['address'] = account.info.address
-            data['restaurant_info']['phone_num'] = account.info.phone_num
+        user = serializer.save()
+        data = RegistrationSerializer(user).data
     else:
         data = serializer.errors
     return Response(data)

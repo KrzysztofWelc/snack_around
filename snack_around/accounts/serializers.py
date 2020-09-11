@@ -19,11 +19,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={"input_type": "password"}, write_only=True)
-    restaurant_info = RestaurantInfoSerializer(required=False)
+    info = RestaurantInfoSerializer(required=False)
 
     class Meta:
         model = Account
-        fields = ['email', 'password', 'password2', 'username', 'restaurant_info', 'is_restaurant']
+        fields = ['email', 'password', 'password2', 'username', 'is_restaurant', 'is_customer', 'info']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -44,7 +44,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.set_password(password)
         account.save()
         if account.is_restaurant:
-            restaurant_info = self.validated_data.pop('restaurant_info')
-            info = RestaurantInfo.objects.create(restaurant=account, **restaurant_info)
-            info.save()
+            info = self.validated_data.pop('info')
+            restaurant_info = RestaurantInfo.objects.create(restaurant=account, **info)
+            restaurant_info.save()
         return account
