@@ -47,7 +47,13 @@ class ReviewView(APIView):
             return Response({'response': "You don't have permission to edit that."},
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        serializer = ReviewSerializer(review, data=request.data, partial=True)
+        data = {}
+        if request.data.get('text'):
+            data['text'] = request.data['text']
+        if request.data.get('score'):
+            data['score'] = request.data['score']
+
+        serializer = ReviewSerializer(review, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
