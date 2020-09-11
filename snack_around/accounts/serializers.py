@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from .models import Account, RestaurantInfo
 
 
@@ -6,6 +7,14 @@ class RestaurantInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantInfo
         fields = ['address', 'phone_num']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    info = RestaurantInfoSerializer(required=False, read_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ['email', 'username', 'is_restaurant', 'is_customer', 'info']
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

@@ -2,7 +2,18 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from .serializers import RegistrationSerializer, RestaurantInfoSerializer
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth import get_user_model
+from .serializers import RegistrationSerializer, UserSerializer
+
+
+class ListRestaurantsView(ListAPIView):
+    queryset = get_user_model().objects.filter(is_restaurant=True)
+    serializer_class = UserSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = []
 
 
 class LoginView(ObtainAuthToken):
