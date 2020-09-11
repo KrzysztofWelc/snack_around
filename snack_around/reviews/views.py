@@ -12,6 +12,15 @@ from .models import Review
 class ReviewView(APIView):
     permission_classes = [ReviewsPermissions, ]
 
+    def get(self, request, *args, **kwargs):
+        review_id = kwargs.get('pk')
+        try:
+            review = Review.objects.get(pk=review_id)
+            data = ReviewSerializer(review).data
+            return Response(data)
+        except Review.DoesNotExist:
+            return Response({'review': 'review not found'}, status=status.HTTP_404_NOT_FOUND)
+
     def post(self, request, *args, **kwargs):
         restaurant_id = request.data.pop('restaurant_id')
 
