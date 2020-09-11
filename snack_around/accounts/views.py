@@ -31,6 +31,24 @@ class LoginView(ObtainAuthToken):
         })
 
 
+class UserView(APIView):
+    permission_classes = []
+
+    # get restaurants ONLY
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+
+        user = get_user_model()
+        try:
+            restaurant = user.objects.get(pk=pk, is_restaurant=True)
+        except user.DoesNotExist:
+            return Response({'user': 'user not found'})
+
+        data = UserSerializer(restaurant).data
+
+        return Response(data)
+
+
 @api_view(['POST', ])
 @permission_classes([])
 def register_view(request):
