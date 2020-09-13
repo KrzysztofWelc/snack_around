@@ -1,8 +1,6 @@
 from rest_framework.permissions import BasePermission
-import pprint
 
 AUTH_REQUIRED_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH']
-pp = pprint.PrettyPrinter(indent=4)
 
 
 class ReviewsPermissions(BasePermission):

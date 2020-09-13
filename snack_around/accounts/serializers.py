@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Account, RestaurantInfo
+from .models import Account, RestaurantInfo, RestaurantImage
 
 
 class RestaurantInfoSerializer(serializers.ModelSerializer):
@@ -15,6 +15,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ['email', 'username', 'is_restaurant', 'is_customer', 'info']
+
+
+class RestaurantImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RestaurantImage
+        fields = '__all__'
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

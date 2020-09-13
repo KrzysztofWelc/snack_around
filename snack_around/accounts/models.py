@@ -68,6 +68,14 @@ class RestaurantInfo(models.Model):
     restaurant = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='info')
 
 
+class RestaurantImage(models.Model):
+    info = models.ForeignKey(RestaurantInfo, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField()
+
+    def __str__(self):
+        return self.image.name
+
+
 @receiver(post_save, sender=get_user_model())
 def generate_auth_token(sender, instance=None, created=False, **kwargs):
     if created:

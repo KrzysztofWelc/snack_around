@@ -5,8 +5,12 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from django.contrib.auth import get_user_model
-from .serializers import RegistrationSerializer, UserSerializer
+from .serializers import RegistrationSerializer, UserSerializer, RestaurantImageSerializer
+from .permissions import IsRestaurant
 
 
 class ListRestaurantsView(ListAPIView):
@@ -47,6 +51,24 @@ class UserView(APIView):
         data = UserSerializer(restaurant).data
 
         return Response(data)
+
+
+class ImageView(APIView):
+    parser_classes = (MultiPartParser, )
+    permission_classes = (IsAuthenticated, IsRestaurant)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'image': request.FILES.pop('image'),
+            'info': request.user.info.pk
+        }
+        file_serializer = RestaurantImageSerializer(data=data)
+
+        if file_serializer.is_valid():
+            file_serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST', ])
