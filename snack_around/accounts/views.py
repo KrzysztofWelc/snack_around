@@ -69,6 +69,24 @@ class ImageView(APIView):
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, *args, **kwargs):
+        id = kwargs.get('pk')
+        try:
+            image = RestaurantImage.objects.get(pk=id)
+        except RestaurantImage.DoesNotExist:
+            return Response({'review': 'review not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if image.info != request.user.info:
+            return Response({'response': "You don't have permission to delete that."},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        operation = image.delete()
+        if operation:
+            return Response()
+        else:
+            return Response({'response': "something went wrong"},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST', ])
 @permission_classes([])
