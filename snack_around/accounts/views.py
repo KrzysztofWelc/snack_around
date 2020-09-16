@@ -5,12 +5,13 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from .serializers import RegistrationSerializer, UserSerializer, RestaurantImageSerializer
 from .permissions import IsRestaurant
+from .models import RestaurantImage
 
 
 class ListRestaurantsView(ListAPIView):
@@ -38,7 +39,7 @@ class LoginView(ObtainAuthToken):
 class UserView(APIView):
     permission_classes = []
 
-    # get restaurants ONLY
+    # get restaurant ONLY
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
 
@@ -54,15 +55,13 @@ class UserView(APIView):
 
 
 class ImageView(APIView):
-    parser_classes = (MultiPartParser, )
+    parser_classes = (FormParser, MultiPartParser, )
     permission_classes = (IsAuthenticated, IsRestaurant)
 
     def post(self, request, *args, **kwargs):
-        data = {
-            'image': request.FILES.pop('image'),
-            'info': request.user.info.pk
-        }
-        file_serializer = RestaurantImageSerializer(data=data)
+
+        data = [{'image': _file, 'info': request.user.info.pk} for _file in request.FILES.getlist('images')]
+        file_serializer = RestaurantImageSerializer(data=data, many=True)
 
         if file_serializer.is_valid():
             file_serializer.save()
@@ -78,6 +77,7 @@ def register_view(request):
     if serializer.is_valid():
         user = serializer.save()
         data = RegistrationSerializer(user).data
+        data['token'] = Token.objects.get(user=user).key
     else:
         data = serializer.errors
     return Response(data)
