@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from PIL import Image
 from django.contrib.auth import get_user_model
 from .models import Account, RestaurantInfo, RestaurantImage
+IMAGE_SIZE_MAX_BYTES = 1024 * 1024 * 3
 
 
 class RestaurantInfoSerializer(serializers.ModelSerializer):
@@ -21,6 +23,15 @@ class RestaurantImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantImage
         fields = '__all__'
+
+    def validate(self, data):
+        im = Image.open(data['image'])
+        width, height = im.size
+        aspect_ratio = width/height
+        if aspect_ratio > 1.75 or aspect_ratio < 0.66:
+            raise serializers.ValidationError({'image': 'wrong aspect ratio'})
+
+        return data
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
