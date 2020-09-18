@@ -70,14 +70,14 @@ class ImageView(APIView):
 
         if file_serializer.is_valid():
             file_serializer.save()
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
-        id = kwargs.get('pk')
+        img_id = kwargs.get('pk')
         try:
-            image = RestaurantImage.objects.get(pk=id)
+            image = RestaurantImage.objects.get(pk=img_id)
         except RestaurantImage.DoesNotExist:
             return Response({'image': 'image not found'}, status=status.HTTP_404_NOT_FOUND)
 
