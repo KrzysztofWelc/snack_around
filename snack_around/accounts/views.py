@@ -36,22 +36,27 @@ class LoginView(ObtainAuthToken):
         })
 
 
-class UserView(APIView):
-    permission_classes = []
+@api_view(['GET'])
+@permission_classes([])
+def single_restaurant_view(request, pk):
+    user = get_user_model()
+    try:
+        restaurant = user.objects.get(pk=pk, is_restaurant=True)
+    except user.DoesNotExist:
+        return Response({'user': 'user not found'})
 
-    # get restaurant ONLY
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
+    data = UserSerializer(restaurant).data
 
-        user = get_user_model()
-        try:
-            restaurant = user.objects.get(pk=pk, is_restaurant=True)
-        except user.DoesNotExist:
-            return Response({'user': 'user not found'})
+    return Response(data)
 
-        data = UserSerializer(restaurant).data
 
-        return Response(data)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user_profile(request):
+    user = request.user
+    data = UserSerializer(user).data
+
+    return Response(data)
 
 
 class ImageView(APIView):
