@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
@@ -80,3 +80,8 @@ class RestaurantImage(models.Model):
 def generate_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+@receiver(post_delete, sender=RestaurantImage)
+def clean_file(sender, instance, **kwargs):
+    instance.image.delete(False)

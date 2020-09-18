@@ -79,7 +79,7 @@ class ImageView(APIView):
         try:
             image = RestaurantImage.objects.get(pk=id)
         except RestaurantImage.DoesNotExist:
-            return Response({'review': 'review not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'image': 'image not found'}, status=status.HTTP_404_NOT_FOUND)
 
         if image.info != request.user.info:
             return Response({'response': "You don't have permission to delete that."},
