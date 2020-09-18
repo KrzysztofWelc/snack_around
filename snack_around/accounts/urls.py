@@ -9,4 +9,5 @@ urlpatterns = [
     path('restaurant/<int:pk>/', views.UserView.as_view(), name='restaurant'),
     path('image', views.ImageView.as_view(), name='image'),
     path('image/<int:pk>/', views.ImageView.as_view(), name='image'),
+    path('user_images/<int:user_id>/', views.restaurant_images_view, name='user_images'),
 ]

@@ -55,7 +55,7 @@ class UserView(APIView):
 
 
 class ImageView(APIView):
-    parser_classes = (FormParser, MultiPartParser, )
+    parser_classes = (FormParser, MultiPartParser,)
     permission_classes = (IsAuthenticated, IsRestaurant)
 
     def post(self, request, *args, **kwargs):
@@ -99,3 +99,17 @@ def register_view(request):
     else:
         data = serializer.errors
     return Response(data)
+
+
+@api_view(['GET', ])
+@permission_classes([])
+def restaurant_images_view(request, user_id):
+    user_model = get_user_model()
+    try:
+        images = user_model.objects.get(pk=user_id).info.images.all()
+    except user_model.DoesNotExist:
+        return Response({'detail': ['no user found', ]})
+
+    data = RestaurantImageSerializer(instance=images, many=True).data
+
+    return Response({'images': data})
