@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('frontend.urls', 'frontend')),
     path('api/account/', include('accounts.urls', 'accounts')),
     path('api/reviews/', include('reviews.urls', 'reviews')),
+    path('api/orders/', include('orders.urls', 'orders')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
