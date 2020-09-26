@@ -1,7 +1,9 @@
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from accounts.permissions import IsCustomer, IsRestaurant
 from .serializers import ProductSerializer
@@ -79,5 +81,8 @@ class ProductView(APIView):
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
+class ProductListView(ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    pagination_class = PageNumberPagination
 
