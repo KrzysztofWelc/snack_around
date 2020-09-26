@@ -1,16 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import permission_classes
 from .serializers import ReviewSerializer
-from .permissions import ReviewsPermissions
 from .models import Review
+from accounts.permissions import IsCustomer
 
 
 class ReviewView(APIView):
-    permission_classes = [ReviewsPermissions, ]
 
     def get(self, request, *args, **kwargs):
         review_id = kwargs.get('pk')
@@ -21,6 +21,7 @@ class ReviewView(APIView):
         except Review.DoesNotExist:
             return Response({'review': 'review not found'}, status=status.HTTP_404_NOT_FOUND)
 
+    @permission_classes([IsAuthenticated, IsCustomer])
     def post(self, request, *args, **kwargs):
         restaurant_id = request.data.pop('restaurant_id')
 
@@ -35,6 +36,7 @@ class ReviewView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @permission_classes([IsAuthenticated, IsCustomer])
     def patch(self, request, *args, **kwargs):
         review_id = kwargs.get('pk')
         try:
@@ -59,6 +61,7 @@ class ReviewView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @permission_classes([IsAuthenticated, IsCustomer])
     def delete(self, request, *args, **kwargs):
         review_id = kwargs.get('pk')
         try:

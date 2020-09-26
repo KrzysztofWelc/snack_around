@@ -37,7 +37,6 @@ class LoginView(ObtainAuthToken):
 
 
 @api_view(['GET'])
-@permission_classes([])
 def single_restaurant_view(request, pk):
     user = get_user_model()
     try:
@@ -94,7 +93,6 @@ class ImageView(APIView):
 
 
 @api_view(['POST', ])
-@permission_classes([])
 def register_view(request):
     serializer = RegistrationSerializer(data=request.data)
     if serializer.is_valid():
@@ -107,7 +105,6 @@ def register_view(request):
 
 
 @api_view(['GET', ])
-@permission_classes([])
 def restaurant_images_view(request, user_id):
     user_model = get_user_model()
     try:
