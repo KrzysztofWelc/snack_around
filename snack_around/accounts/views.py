@@ -30,10 +30,10 @@ class LoginView(ObtainAuthToken):
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
-            'user_id': user.pk,
+            'id': user.pk,
             'email': user.email,
             'username': user.username,
-        })
+        }, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -92,6 +92,18 @@ class ImageView(APIView):
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET', ])
+def restaurant_images_view(request, user_id):
+    user_model = get_user_model()
+    try:
+        images = user_model.objects.get(pk=user_id).info.images.all()
+    except user_model.DoesNotExist:
+        return Response({'detail': ['no user found', ]}, status=status.HTTP_404_NOT_FOUND)
+
+    data = RestaurantImageSerializer(instance=images, many=True).data
+    return Response(data)
+
+
 @api_view(['POST', ])
 def register_view(request):
     serializer = RegistrationSerializer(data=request.data)
@@ -99,19 +111,7 @@ def register_view(request):
         user = serializer.save()
         data = RegistrationSerializer(user).data
         data['token'] = Token.objects.get(user=user).key
+        return Response(data, status=status.HTTP_201_CREATED)
     else:
         data = serializer.errors
-    return Response(data)
-
-
-@api_view(['GET', ])
-def restaurant_images_view(request, user_id):
-    user_model = get_user_model()
-    try:
-        images = user_model.objects.get(pk=user_id).info.images.all()
-    except user_model.DoesNotExist:
-        return Response({'detail': ['no user found', ]})
-
-    data = RestaurantImageSerializer(instance=images, many=True).data
-
-    return Response({'images': data})
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
