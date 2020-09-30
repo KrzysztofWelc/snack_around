@@ -29,6 +29,11 @@ class TestRestaurantImages(APITestCase):
 
         self.token, _created = Token.objects.get_or_create(user=self.user)
 
+    def tearDown(self) -> None:
+        images = self.user.info.images.all()
+        for image in images:
+            image.delete()
+
     def generate_photo_file(self):
         file = io.BytesIO()
         image = Image.new('RGBA', size=(100, 100), color=(155, 0, 0))
