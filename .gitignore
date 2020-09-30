@@ -1,4 +1,5 @@
 /snack_around/db.sqlite3
+/snack_around/.env
 .idea
 **/*.pyc
 **/__pycache__
