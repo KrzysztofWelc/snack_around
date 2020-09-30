@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 from decouple import config, Csv
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,17 +89,13 @@ DATABASES = {
     # },
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME_DEV'),
-        'USER': config('DB_USER_DEV'),
-        'PASSWORD': config('DB_PASSWORD_DEV'),
-        'HOST': config('DB_HOST_DEV'),
-        'PORT': config('DB_PORT_DEV')
+        'NAME': config('DB_NAME_DEV') if DEBUG else config('DB_NAME_PROD'),
+        'USER': config('DB_USER_DEV') if DEBUG else config('DB_USER_PROD'),
+        'PASSWORD': config('DB_PASSWORD_DEV') if DEBUG else config('DB_PASSWORD_PROD'),
+        'HOST': config('DB_HOST_DEV') if DEBUG else config('DB_HOST_PROD'),
+        'PORT': config('DB_PORT_DEV') if DEBUG else config('DB_PORT_PROD')
     }
 }
-if not DEBUG:
-    import dj_database_url
-    db_from_env = dj_database_url.config(conn_max_age=600)
-    DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
