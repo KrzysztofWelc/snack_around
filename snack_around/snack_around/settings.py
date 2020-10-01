@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
 from decouple import config, Csv
+import django_heroku
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -83,19 +85,23 @@ WSGI_APPLICATION = 'snack_around.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # },
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME_DEV') if DEBUG else config('DB_NAME_PROD'),
-        'USER': config('DB_USER_DEV') if DEBUG else config('DB_USER_PROD'),
-        'PASSWORD': config('DB_PASSWORD_DEV') if DEBUG else config('DB_PASSWORD_PROD'),
-        'HOST': config('DB_HOST_DEV') if DEBUG else config('DB_HOST_PROD'),
-        'PORT': config('DB_PORT_DEV') if DEBUG else config('DB_PORT_PROD')
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': config('DB_NAME_DEV') if DEBUG else config('DB_NAME_PROD'),
+    #     'USER': config('DB_USER_DEV') if DEBUG else config('DB_USER_PROD'),
+    #     'PASSWORD': config('DB_PASSWORD_DEV') if DEBUG else config('DB_PASSWORD_PROD'),
+    #     'HOST': config('DB_HOST_DEV') if DEBUG else config('DB_HOST_PROD'),
+    #     'PORT': config('DB_PORT_DEV') if DEBUG else config('DB_PORT_PROD')
+    # }
 }
+if not DEBUG:
+    import dj_database_url
+    db_from_env = dj_database_url.config(conn_max_age=600)
+    DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -142,7 +148,8 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_TMP = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
-os.makedirs(STATIC_TMP, exist_ok=True)
-os.makedirs(STATIC_ROOT, exist_ok=True)
-os.makedirs(MEDIA_ROOT, exist_ok=True)
+# os.makedirs(STATIC_TMP, exist_ok=True)
+# os.makedirs(STATIC_ROOT, exist_ok=True)
+# os.makedirs(MEDIA_ROOT, exist_ok=True)
 
+django_heroku.settings(locals())
